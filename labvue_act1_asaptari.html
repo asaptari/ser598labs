@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Answer 3 Questions</title>
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    .container {
+      display: block;
+      margin: 50px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+      display: block; /* Ensure label and input are displayed as block elements */
+    }
+    label {
+      display: block; /* Ensures the label takes full width and is on its own line */
+      margin-bottom: 5px; /* Adds some space below the label */
+    }
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+      color: red;
+    }
+    button {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <!-- Single Question Set -->
+      <div>
+        <h3>Answer me these questions 3:</h3>
+        <div class="form-group">
+          <label>1. What is your name?</label>
+          <input type="text" v-model="answers.name" @input="checkAnswers">
+        </div>
+        <div class="form-group">
+          <label>2. What is your quest?</label>
+          <input type="text" v-model="answers.quest" @input="checkAnswers">
+        </div>
+        <div class="form-group">
+          <label>3. {{ currentQuestion }}</label>
+          <input type="text" v-model="answers.thirdAnswer" @input="checkAnswers">
+        </div>
+        <div v-if="computedMessage" class="message">{{ computedMessage }}</div>
+        <button @click="resetQuestions">Go again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    Vue.createApp({
+      data() {
+        return {
+          questions: [
+            "What is your favorite color?",
+            "What is the airspeed velocity of an unladen swallow?"
+          ],
+          currentQuestionIndex: 0,  // Index for alternating third question
+          answers: {
+            name: '',
+            quest: '',
+            thirdAnswer: ''
+          }
+        };
+      },
+      computed: {
+        currentQuestion() {
+          // Alternate between the two questions based on the current index
+          return this.questions[this.currentQuestionIndex];
+        },
+        computedMessage() {
+          const { name, quest, thirdAnswer } = this.answers;
+
+          // Check if any answer contains "idk"
+          if ([name, quest, thirdAnswer].some(answer => answer.toLowerCase() === 'idk')) {
+            return 'Knight: AAAAAAAAHHHHHHHHHHH!!!';
+          }
+
+          // If all answers are filled and none of them is 'idk'
+          if (name && quest && thirdAnswer) {
+            return 'Bridgekeeper: Alright, off you go then';
+          }
+
+          // No message if conditions aren't met
+          return '';
+        }
+      },
+      methods: {
+        checkAnswers() {
+          // Reactive updates are handled through v-model
+        },
+        resetQuestions() {
+          // Reset the answers
+          this.answers = { name: '', quest: '', thirdAnswer: '' };
+          // Alternate the third question by toggling the index
+          this.currentQuestionIndex = (this.currentQuestionIndex + 1) % this.questions.length;
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
